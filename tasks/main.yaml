@@ -1,0 +1,58 @@
+---
+- name: Set up static inputs
+  ansible.builtin.set_fact:
+    _vmware_vm_network_config:
+      device_name: vmxnet3
+      gateway: "{{ gateway_ip }}"
+      ip: "{{ ip }}"
+      label: Network adapter 1
+      name: "{{ network_name }}"
+      start_connected: true
+      type: static
+    _vm_hw_cpu_count: 4
+    _vm_hw_memory_mb: 8192 
+    _vmware_vm_disk_config:
+      controller_number: 0
+      controller_type: paravirtual
+      datastore: "{{ datastore }}"
+      size_gb: 50
+      type: thin
+      unit_number: 0
+    _vm_power_state: poweredon
+    _vm_scsi_type: paravirtual
+    _vm_customization_script: |
+      #!/bin/bash
+      echo "{{ vm_guest_admin_username }}:{{ vm_guest_admin_password }}" | chpasswd
+
+- name: Clone the VM template and customize
+  community.vmware.vmware_guest:
+    hostname: "{{ loookup('ansible.builtin.env', 'VMWARE_HOST', default='') }}"
+    username: "{{ loookup('ansible.builtin.env', 'VMWARE_USER', default='') }}"
+    password: "{{ loookup('ansible.builtin.env', 'VMWARE_PASSWORD', default='') }}"
+    template: "{{ vm_template }}"
+    datacenter: "{{ datacenter }}"
+    folder: "{{ folder }}"
+    cluster: "{{ cluster }}"
+    datastore: "{{ datastore }}"
+    state: "{{ _vm_power_state }}"
+    name: "{{ vm_name }}"
+    disk: "{{ [_vmware_vm_disk_config] }}"
+    hardware:
+      num_cpus: "{{ _vm_hw_cpu_count | int }}"
+      hotadd_cpu: true
+      memory_mb: "{{ _vm_hw_memory_mb | int }}"
+      hotadd_memory: true
+      scsi: "{{ _vm_scsi_type }}"
+    customization:
+      hostname: "{{ vm_name }}"
+      dns_servers: "{{ dns_servers }}"
+      dns_suffix: "{{ dns_suffix }}"
+      fullname: "{{ vm_guest_admin_username }}"
+      password: "{{ vm_guest_admin_password }}"
+      script_text: "{{ _vm_customization_script }}"
+    networks: "{{ _vmware_vm_network_config }}"
+  #  wait_for_customization: true
+    wait_for_ip_address: true
+  register: vmware_vm_info 
+
+- debug: var=vmware_vm_info
