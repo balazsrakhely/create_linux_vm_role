@@ -7,6 +7,7 @@
       ip: "{{ ip }}"
       label: Network adapter 1
       name: "{{ network_name }}"
+      netmask: "{{ netmask }}"
       start_connected: true
       type: static
     _vm_hw_cpu_count: 4
