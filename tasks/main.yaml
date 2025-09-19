@@ -26,9 +26,9 @@
 
 - name: Clone the VM template and customize
   community.vmware.vmware_guest:
-    hostname: "{{ loookup('ansible.builtin.env', 'VMWARE_HOST', default='') }}"
-    username: "{{ loookup('ansible.builtin.env', 'VMWARE_USER', default='') }}"
-    password: "{{ loookup('ansible.builtin.env', 'VMWARE_PASSWORD', default='') }}"
+    hostname: "{{ lookup('ansible.builtin.env', 'VMWARE_HOST', default='') }}"
+    username: "{{ lookup('ansible.builtin.env', 'VMWARE_USER', default='') }}"
+    password: "{{ lookup('ansible.builtin.env', 'VMWARE_PASSWORD', default='') }}"
     template: "{{ vm_template }}"
     datacenter: "{{ datacenter }}"
     folder: "{{ folder }}"
