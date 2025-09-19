@@ -48,9 +48,9 @@
       hostname: "{{ vm_name }}"
       dns_servers: "{{ dns_servers }}"
       dns_suffix: "{{ dns_suffix }}"
-      fullname: "{{ vm_guest_admin_username }}"
-      password: "{{ vm_guest_admin_password }}"
-      script_text: "{{ _vm_customization_script }}"
+      # fullname: "{{ vm_guest_admin_username }}"
+      # password: "{{ vm_guest_admin_password }}"
+      # script_text: "{{ _vm_customization_script }}"
     networks: "{{ [_vmware_vm_network_config] }}"
   #  wait_for_customization: true
     wait_for_ip_address: true
